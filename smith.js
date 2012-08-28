@@ -273,6 +273,8 @@ Agent.prototype.subscribe = function( evname, fn) {
 }
 
 Agent.prototype.publish = function( evname, args) {
+    if (!this.transport)
+      return;
     var message = [9999, evname, args]
     return this.transport.send(message);
 }
