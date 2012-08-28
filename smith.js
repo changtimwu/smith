@@ -212,6 +212,7 @@ function Agent(api) {
     this.transport = undefined;
     this.callbacks = undefined;
     this.nextKey = undefined;
+    this.subscribes = {};
 }
 inherits(Agent, EventEmitter);
 
@@ -266,6 +267,15 @@ Agent.prototype.connect = function (transport, callback) {
         clearTimeout(timeout);
     }
 };
+
+Agent.prototype.subscribe = function( evname, fn) {
+    this.subscribes[evname]=fn;
+}
+
+Agent.prototype.publish = function( evname, args) {
+    var message = [9999, evname, args]
+    return this.transport.send(message);
+}
 
 Agent.prototype.send = function (message) {
     message = freeze(message, this._storeFunction);
@@ -356,8 +366,10 @@ Agent.prototype._onMessage = function (message) {
         fn = function (callback) {
             callback(keys);
         };
-    }
-    else {
+    }else if ( id === 9999) {
+        fn = this.subscribes[ message[1]]
+        message=message.slice(1)
+    } else {
         fn = typeof id === "string" ? this.api[id] : this.callbacks[id];
     }
     if (typeof fn !== "function") {
