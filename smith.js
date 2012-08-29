@@ -369,8 +369,11 @@ Agent.prototype._onMessage = function (message) {
             callback(keys);
         };
     }else if ( id === 9999) {
-        fn = this.subscribes[ message[1]]
-        message=message.slice(1)
+        var fnid =message[1];
+        if ( !( fnid in this.subscribes))
+            return;
+        fn = this.subscribes[ fnid];
+        message=message.slice(1);
     } else {
         fn = typeof id === "string" ? this.api[id] : this.callbacks[id];
     }
