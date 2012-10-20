@@ -87,7 +87,8 @@ function Transport(input, debug) {
         try {
             message = msgpack.decode(frame);
         } catch (err) {
-            return self.emit("error", err);
+          console.log('msgpack.decode err:', err);
+          return self.emit("error", err);
         }
         debug && console.log(process.pid + " <- " + require('util').inspect(message, false, 2, true));
         self.emit("message", message);
@@ -98,6 +99,7 @@ function Transport(input, debug) {
         try {
             parse(chunk);
         } catch (err) {
+            console.log('onData parse err:', err);
             self.emit("error", err);
         }
     }
@@ -276,10 +278,11 @@ Agent.prototype.publish = function( evname, args) {
     if (!this.transport)
       return;
     var message = [9999, evname, args]
+    this.transport.send(message);
     try {
-        this.transport.send(message);
+      this.transport.send(message);
     } catch (err) {
-        console.log("Error:", err);
+      console.log("transport.send err:", err);
     }
 }
 
@@ -596,7 +599,10 @@ function WebSocketTransport(socket, debug) {
     function onMessage(data) {
         var message;
         try { message = msgpack.decode(data); }
-        catch (err) { return onError(err); }
+        catch (err) { 
+          console.log('onMessage err:', err);
+          return onError(err); 
+        }
         debug && console.log(process.pid + " <- " + require('util').inspect(message, false, 2, true));
         self.emit("message", message);
     }
@@ -618,7 +624,10 @@ WebSocketTransport.prototype.send = function (message) {
     this.debug && console.log(process.pid + " -> " + require('util').inspect(message, false, 2, true));
     var data;
     try { data = msgpack.encode(message); }
-    catch (err) { return this.emit("error", err); }
+    catch (err) { 
+      console.log('msgpack.encode err:', err);
+      return this.emit("error", err); 
+    }
     this.socket.send(data, {binary: true});
 };
 
