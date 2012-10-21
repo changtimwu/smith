@@ -385,7 +385,11 @@ Agent.prototype._onMessage = function (message) {
     } else {
         fn = typeof id === "string" ? this.api[id] : this.callbacks[id];
     }
+    if (fn==undefined) {
+      return this.emit("error",  new Error("can't find api/callback with id->"+id));
+    }
     if (typeof fn !== "function") {
+
         return this.emit("error",  new Error("Should be function"));
     }
     fn.apply(this, message.slice(1));
