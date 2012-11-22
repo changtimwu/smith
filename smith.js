@@ -381,6 +381,7 @@ Agent.prototype._onMessage = function (message) {
         if ( !( fnid in this.subscribes))
             return;
         fn = this.subscribes[ fnid];
+        this.evname = fnid;
         message=message.slice(1);
     } else {
         fn = typeof id === "string" ? this.api[id] : this.callbacks[id];
