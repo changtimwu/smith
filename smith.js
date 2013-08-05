@@ -278,7 +278,6 @@ Agent.prototype.publish = function( evname, args) {
     if (!this.transport)
       return;
     var message = [9999, evname, args]
-    this.transport.send(message);
     try {
       this.transport.send(message);
     } catch (err) {
