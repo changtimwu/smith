@@ -219,7 +219,7 @@ function Agent(api) {
 inherits(Agent, EventEmitter);
 
 // Time to wait for Agent connections to finish
-Agent.prototype.connectionTimeout = 10000;
+Agent.prototype.connectionTimeout = 100000;
 
 Agent.prototype.connect = function (transport, callback) {
     // If they passed in a raw stream, wrap it.
