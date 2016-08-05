@@ -392,6 +392,7 @@ Agent.prototype._onMessage = function (message) {
 
         return this.emit("error",  new Error("Should be function"));
     }
+    this.emit("onMessage", id);
     fn.apply(this, message.slice(1));
 };
 
